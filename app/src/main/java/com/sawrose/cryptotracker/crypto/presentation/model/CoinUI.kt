@@ -1,9 +1,10 @@
-package com.sawrose.cryptotracker.presentation.model
+package com.sawrose.cryptotracker.crypto.presentation.model
 
 import android.icu.text.NumberFormat
 import androidx.annotation.DrawableRes
 import com.sawrose.cryptotracker.crypto.domain.Coin
 import com.sawrose.cryptotracker.core.presentation.util.getDrawableIdForCoin
+import com.sawrose.cryptotracker.crypto.presentation.coin_detail.DataPoint
 import java.util.Locale
 
 data class CoinUI(
@@ -15,6 +16,7 @@ data class CoinUI(
     val priceUsd: DisplayableNumber,
     val changePercent24Hr: DisplayableNumber,
     @DrawableRes val iconRes: Int,
+    val coinPriceHistory: List<DataPoint> = emptyList()
 )
 
 

@@ -1,4 +1,4 @@
-package com.sawrose.cryptotracker.presentation.coin_list
+package com.sawrose.cryptotracker.crypto.presentation.coin_list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,16 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.sawrose.cryptotracker.presentation.coin_list.components.CoinListItem
-import com.sawrose.cryptotracker.presentation.coin_list.components.previewCoin
+import com.sawrose.cryptotracker.crypto.presentation.coin_list.components.CoinListItem
+import com.sawrose.cryptotracker.crypto.presentation.coin_list.components.previewCoin
 import com.sawrose.cryptotracker.ui.theme.CryptoTrackerTheme
 
 @Composable
 fun CoinListScreen(
+    modifier: Modifier = Modifier,
     state: CoinListState,
-    modifier: Modifier = Modifier
+    onAction: (CoinListAction) -> Unit = {}
 ) {
-
     if (state.isLoading) {
         Box(
             modifier = modifier
@@ -42,7 +42,9 @@ fun CoinListScreen(
             itemsIndexed(state.coins) { index, coin ->
                 CoinListItem(
                     coinUI = coin,
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        onAction(CoinListAction.OnCoinClicked(coin))
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
 

@@ -1,4 +1,4 @@
-package com.sawrose.cryptotracker.presentation.coin_list.components
+package com.sawrose.cryptotracker.crypto.presentation.coin_list.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,8 +24,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sawrose.cryptotracker.crypto.domain.Coin
-import com.sawrose.cryptotracker.presentation.model.CoinUI
-import com.sawrose.cryptotracker.presentation.model.toCoinUI
+import com.sawrose.cryptotracker.crypto.presentation.model.CoinUI
+import com.sawrose.cryptotracker.crypto.presentation.model.toCoinUI
 import com.sawrose.cryptotracker.ui.theme.CryptoTrackerTheme
 
 @Composable

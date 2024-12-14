@@ -1,7 +1,7 @@
-package com.sawrose.cryptotracker.presentation.coin_list
+package com.sawrose.cryptotracker.crypto.presentation.coin_list
 
 import androidx.compose.runtime.Immutable
-import com.sawrose.cryptotracker.presentation.model.CoinUI
+import com.sawrose.cryptotracker.crypto.presentation.model.CoinUI
 
 @Immutable
 data class CoinListState(

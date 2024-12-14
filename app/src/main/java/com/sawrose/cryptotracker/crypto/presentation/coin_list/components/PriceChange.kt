@@ -1,8 +1,6 @@
-package com.sawrose.cryptotracker.presentation.coin_list.components
+package com.sawrose.cryptotracker.crypto.presentation.coin_list.components
 
-import android.R.attr.fontWeight
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,10 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sawrose.cryptotracker.presentation.model.DisplayableNumber
+import com.sawrose.cryptotracker.crypto.presentation.model.DisplayableNumber
 import com.sawrose.cryptotracker.ui.theme.CryptoTrackerTheme
 import com.sawrose.cryptotracker.ui.theme.greenBackground
-import io.ktor.util.reflect.typeInfoImpl
 
 @Composable
 fun PriceChange(

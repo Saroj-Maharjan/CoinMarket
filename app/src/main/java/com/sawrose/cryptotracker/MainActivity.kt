@@ -8,11 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sawrose.cryptotracker.presentation.coin_list.CoinListScreen
-import com.sawrose.cryptotracker.presentation.coin_list.CoinListViewModel
+import com.sawrose.cryptotracker.core.navigation.AdaptiveCoinListDetailPane
 import com.sawrose.cryptotracker.ui.theme.CryptoTrackerTheme
-import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,11 +18,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             CryptoTrackerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val viewmodel = koinViewModel<CoinListViewModel>()
-                    val state = viewmodel.state.collectAsStateWithLifecycle()
-                    CoinListScreen(
-                        state = state.value,
-                        modifier = Modifier.padding(innerPadding)
+                    AdaptiveCoinListDetailPane(
+                        modifier = Modifier.padding(innerPadding),
                     )
                 }
             }

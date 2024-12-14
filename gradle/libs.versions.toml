@@ -12,7 +12,7 @@ desugar-jdk-libs = "2.1.2"
 ktor = "2.3.12"
 koin = "3.5.6"
 material3-adaptive = "1.0.0"
-compose-material-icons-extended = "1.7.2"
+compose-material-icons-extended = "1.7.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

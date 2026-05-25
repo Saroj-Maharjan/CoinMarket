@@ -8,6 +8,7 @@ import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneSca
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,6 +19,7 @@ import com.sawrose.cryptotracker.crypto.presentation.coin_list.CoinListAction
 import com.sawrose.cryptotracker.crypto.presentation.coin_list.CoinListEvent
 import com.sawrose.cryptotracker.crypto.presentation.coin_list.CoinListScreen
 import com.sawrose.cryptotracker.crypto.presentation.coin_list.CoinListViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -29,6 +31,7 @@ fun AdaptiveCoinListDetailPane(
 
     val state by viewmodel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     ObserveAsEvents(events = viewmodel.events) { event ->
         when (event) {
@@ -46,12 +49,14 @@ fun AdaptiveCoinListDetailPane(
                 CoinListScreen(
                     state = state,
                     onAction = { action ->
-                        when(action) {
+                        when (action) {
                             is CoinListAction.OnCoinClicked -> {
-                                viewmodel.onAction(action)
-                                navigator.navigateTo(
-                                    pane = ListDetailPaneScaffoldRole.Detail
-                                )
+                                coroutineScope.launch {
+                                    viewmodel.onAction(action)
+                                    navigator.navigateTo(
+                                        pane = ListDetailPaneScaffoldRole.Detail
+                                    )
+                                }
                             }
                         }
                     }

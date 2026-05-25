@@ -2,10 +2,9 @@ package com.sawrose.cryptotracker.crypto.presentation.coin_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sawrose.cryptotracker.core.domain.util.onError
-import com.sawrose.cryptotracker.core.domain.util.onSuccess
+import com.sawrose.cryptotracker.core.domain.util.NetworkError
 import com.sawrose.cryptotracker.crypto.domain.Coin
-import com.sawrose.cryptotracker.crypto.domain.CoinDataSource
+import com.sawrose.cryptotracker.crypto.domain.CoinRepository
 import com.sawrose.cryptotracker.crypto.presentation.coin_detail.DataPoint
 import com.sawrose.cryptotracker.crypto.presentation.model.CoinUI
 import com.sawrose.cryptotracker.crypto.presentation.model.toCoinUI
@@ -18,11 +17,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class CoinListViewModel(
-    private val coinDataSource: CoinDataSource
+    private val coinRepository: CoinRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CoinListState())
@@ -51,49 +51,88 @@ class CoinListViewModel(
         }
 
         viewModelScope.launch {
-            coinDataSource.getCoinHistory(
+            coinRepository.getCoinHistory(
                 coinId = coinUI.id,
                 start = ZonedDateTime.now().minusDays(5),
                 endRange = ZonedDateTime.now()
-            )
-                .onSuccess { history ->
-                    val dataPoints = history
-                        .sortedBy { it.dateTime }
-                        .map {
-                            DataPoint(
-                                x = it.dateTime.hour.toFloat(),
-                                y = it.priceUsd.toFloat(),
-                                xLabel = DateTimeFormatter
-                                    .ofPattern("ha\nM/d")
-                                    .format(it.dateTime)
-                            )
-                        }
-                    _state.update {
-                        it.copy(selectedCoin = it.selectedCoin?.copy(coinPriceHistory = dataPoints))
+            ).collect { response ->
+                when (response) {
+                    is StoreReadResponse.Loading -> {
+                        // Optionally handle custom history loading if needed
                     }
+                    is StoreReadResponse.Data -> {
+                        val dataPoints = response.value
+                            .sortedBy { it.dateTime }
+                            .map {
+                                DataPoint(
+                                    x = it.dateTime.hour.toFloat(),
+                                    y = it.priceUsd.toFloat(),
+                                    xLabel = DateTimeFormatter
+                                        .ofPattern("ha\nM/d")
+                                        .format(it.dateTime)
+                                )
+                            }
+                        _state.update {
+                            if (it.selectedCoin?.id == coinUI.id) {
+                                it.copy(selectedCoin = it.selectedCoin?.copy(coinPriceHistory = dataPoints))
+                            } else {
+                                it
+                            }
+                        }
+                    }
+                    is StoreReadResponse.Error -> {
+                        val errorMsg = when (response) {
+                            is StoreReadResponse.Error.Exception -> response.error.message
+                            is StoreReadResponse.Error.Message -> response.message
+                            else -> "UNKNOWN_ERROR"
+                        }
+                        val networkError = try {
+                            NetworkError.valueOf(errorMsg ?: "")
+                        } catch (e: Exception) {
+                            NetworkError.UNKNOWN_ERROR
+                        }
+                        _events.send(CoinListEvent.Error(networkError))
+                    }
+                    else -> Unit
                 }
-                .onError { error ->
-                    _events.send(CoinListEvent.Error(error))
-                }
+            }
         }
     }
 
     private fun loadCoins() {
         viewModelScope.launch {
-            _state.update {
-                it.copy(isLoading = true)
-            }
-
-            coinDataSource.getCoins()
-                .onSuccess { coins ->
-                    _state.update {
-                        it.copy(isLoading = false, coins = coins.map(Coin::toCoinUI))
+            coinRepository.getCoins().collect { response ->
+                when (response) {
+                    is StoreReadResponse.Loading -> {
+                        _state.update {
+                            it.copy(isLoading = true)
+                        }
                     }
+                    is StoreReadResponse.Data -> {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                coins = response.value.map(Coin::toCoinUI)
+                            )
+                        }
+                    }
+                    is StoreReadResponse.Error -> {
+                        _state.update { it.copy(isLoading = false) }
+                        val errorMsg = when (response) {
+                            is StoreReadResponse.Error.Exception -> response.error.message
+                            is StoreReadResponse.Error.Message -> response.message
+                            else -> "UNKNOWN_ERROR"
+                        }
+                        val networkError = try {
+                            NetworkError.valueOf(errorMsg ?: "")
+                        } catch (e: Exception) {
+                            NetworkError.UNKNOWN_ERROR
+                        }
+                        _events.send(CoinListEvent.Error(networkError))
+                    }
+                    else -> Unit
                 }
-                .onError { error ->
-                    _state.update { it.copy(isLoading = false) }
-                    _events.send(CoinListEvent.Error(error))
-                }
+            }
         }
     }
 

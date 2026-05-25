@@ -4,6 +4,7 @@ import com.sawrose.cryptotracker.core.domain.util.NetworkError
 import com.sawrose.cryptotracker.core.domain.util.Result
 import io.ktor.client.statement.HttpResponse
 import io.ktor.util.network.UnresolvedAddressException
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.serialization.SerializationException
 import kotlin.coroutines.coroutineContext
@@ -18,7 +19,7 @@ suspend inline fun <reified T> safeCall(
     } catch (e: SerializationException){
         return Result.Error(NetworkError.SERIALIZATION_ERROR)
     } catch (e: Exception) {
-        coroutineContext.ensureActive()
+        currentCoroutineContext().ensureActive()
         return Result.Error(NetworkError.UNKNOWN_ERROR)
     }
 

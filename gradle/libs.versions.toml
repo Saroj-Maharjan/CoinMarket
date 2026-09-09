@@ -15,7 +15,7 @@ material3-adaptive = "1.2.0"
 compose-material-icons-extended = "1.7.8"
 room = "2.8.4"
 store5 = "5.0.0"
-ksp = "2.3.8"
+ksp = "2.3.12"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

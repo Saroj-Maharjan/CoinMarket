@@ -13,7 +13,7 @@ ktor = "3.5.0"
 koin = "4.2.1"
 material3-adaptive = "1.2.0"
 compose-material-icons-extended = "1.7.8"
-room = "2.8.4"
+room = "2.8.5"
 store5 = "5.0.0"
 ksp = "2.3.8"
 
